@@ -16,16 +16,16 @@ import { ActionLogType, UpdateActionLogChange } from "../interfaces/actionLog.in
 })
 class ActionLogClass {
 
-    @prop({ type: String, required: true })
+    @prop({ type: String, required: true, index: 1 })
     public userId!: string;
 
     @prop({ type: String, required: true })
     public type!: ActionLogType;
 
-    @prop({ type: String, required: true })
+    @prop({ type: String, required: true, index: 1 })
     public entity!: string;
 
-    @prop({ type: String, required: true })
+    @prop({ type: String, required: true, index: 1 })
     public entityId!: string;
 
     @prop({ type: Array<UpdateActionLogChange>, default: undefined })
@@ -33,6 +33,7 @@ class ActionLogClass {
 
     @prop({ type: Date, default: () => new Date() })
     public createdAt!: Date;
+
 }
 
 export const ActionLogModel = getModelForClass(ActionLogClass);

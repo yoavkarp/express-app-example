@@ -1,5 +1,5 @@
 import { getModelForClass, modelOptions, prop, Severity } from "@typegoose/typegoose";
-import { ActionLogType, UpdateActionLogChange } from "../interfaces/actionLog.interface";
+import { ActionLogType } from "../interfaces/actionLog.interface";
 
 
 @modelOptions({

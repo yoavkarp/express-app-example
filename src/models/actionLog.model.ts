@@ -26,9 +26,6 @@ class UpdateActionLogChangeClass {
             createdAt: true
         }, // Enable timestamps
         versionKey: false
-    },
-    options: {
-        allowMixed: Severity.ALLOW
     }
 })
 class ActionLogClass {

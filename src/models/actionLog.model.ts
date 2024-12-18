@@ -1,4 +1,4 @@
-import { getModelForClass, modelOptions, prop, Severity } from "@typegoose/typegoose";
+import { getModelForClass, modelOptions, prop } from "@typegoose/typegoose";
 import { ActionLogType } from "../interfaces/actionLog.interface";
 
 

@@ -1,4 +1,4 @@
-import { getModelForClass, modelOptions, prop, PropType, Severity, types } from "@typegoose/typegoose";
+import { getModelForClass, modelOptions, prop } from "@typegoose/typegoose";
 import { UserRole } from "../interfaces/user.interface";
 
 

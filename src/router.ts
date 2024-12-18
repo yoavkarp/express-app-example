@@ -1,9 +1,5 @@
 import express from 'express'
 
-export type RouterProps = {
-
-}
-
 export abstract class Router {
 
     router: express.Router;

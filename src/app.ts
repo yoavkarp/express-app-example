@@ -29,6 +29,10 @@ export class App {
     }
 
     listen() {
+        if (this.server) {
+            console.error('Server already running');
+            return;
+        }
         this.server = this.app.listen(process.env.PORT || 3000, () => {
             console.log('Server is running on port', process.env.PORT || 3000);
         });

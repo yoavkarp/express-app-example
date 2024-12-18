@@ -1,12 +1,15 @@
-import { getModelForClass, modelOptions, prop, PropType } from "@typegoose/typegoose";
+import { getModelForClass, modelOptions, prop, PropType, Severity } from "@typegoose/typegoose";
 import { UserRole } from "../interfaces/user.interface";
 
 
 @modelOptions({
     schemaOptions: {
         timestamps: true, // Enable timestamps
-        versionKey: false
+        versionKey: false,
     },
+    options: {
+        allowMixed: Severity.ALLOW
+    }
 })
 class UserClass {
 

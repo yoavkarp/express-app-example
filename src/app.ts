@@ -40,7 +40,6 @@ export class App {
 
     close() {
         this.server?.close((err) => {
-            if (process.env.NODE_ENV === 'test') return;
             if (err) {
                 console.error(err);
                 return;

@@ -1,4 +1,4 @@
-import { getModelForClass, modelOptions, prop } from "@typegoose/typegoose";
+import { getModelForClass, modelOptions, prop, Severity } from "@typegoose/typegoose";
 import { ActionLogType, UpdateActionLogChange } from "../interfaces/actionLog.interface";
 
 
@@ -10,6 +10,9 @@ import { ActionLogType, UpdateActionLogChange } from "../interfaces/actionLog.in
         }, // Enable timestamps
         versionKey: false
     },
+    options: {
+        allowMixed: Severity.ALLOW
+    }
 })
 class ActionLogClass {
 

@@ -1,4 +1,4 @@
-import { getModelForClass, modelOptions, prop, PropType, Severity } from "@typegoose/typegoose";
+import { getModelForClass, modelOptions, prop, PropType, Severity, types } from "@typegoose/typegoose";
 import { UserRole } from "../interfaces/user.interface";
 
 
@@ -6,11 +6,9 @@ import { UserRole } from "../interfaces/user.interface";
     schemaOptions: {
         timestamps: true, // Enable timestamps
         versionKey: false,
-    },
-    options: {
-        allowMixed: Severity.ALLOW
     }
 })
+
 class UserClass {
 
     @prop({ type: String, required: true })
@@ -22,7 +20,7 @@ class UserClass {
     @prop({ type: String })
     public email?: string;
 
-    @prop({ type: Array<UserRole>, required: true, default: [UserRole.USER] })
+    @prop({ type: () => [UserRole], required: true, default: [UserRole.USER] })
     public roles!: UserRole[];
 
     @prop({ type: Date, default: () => new Date() })

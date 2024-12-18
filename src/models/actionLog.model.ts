@@ -4,6 +4,23 @@ import { ActionLogType, UpdateActionLogChange } from "../interfaces/actionLog.in
 
 @modelOptions({
     schemaOptions: {
+        versionKey: false,
+        _id: false
+    },
+})
+class UpdateActionLogChangeClass {
+    @prop({ type: String, required: true })
+    key!: string;
+
+    @prop({ type: String, required: true })
+    prev!: string;
+
+    @prop({ type: String, required: true })
+    next!: string;
+}
+
+@modelOptions({
+    schemaOptions: {
         timestamps: {
             updatedAt: false,
             createdAt: true
@@ -28,8 +45,8 @@ class ActionLogClass {
     @prop({ type: String, required: true, index: 1 })
     public entityId!: string;
 
-    @prop({ type: Array<UpdateActionLogChange>, default: undefined })
-    public changes?: UpdateActionLogChange[];
+    @prop({ type: () => [UpdateActionLogChangeClass], default: undefined })
+    public changes?: UpdateActionLogChangeClass[];
 
     @prop({ type: Date, default: () => new Date() })
     public createdAt!: Date;

@@ -38,13 +38,7 @@ export class App {
         });
     }
 
-    close() {
-        this.server?.close((err) => {
-            if (err) {
-                console.error(err);
-                return;
-            }
-            console.log('Server closed');
-        });
+    close(callback?: () => void) {
+        this.server?.close(callback);
     }
 }

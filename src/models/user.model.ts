@@ -1,5 +1,5 @@
 import { getModelForClass, modelOptions, prop } from "@typegoose/typegoose";
-import { UserRole } from "../interfaces/user.interface";
+import { UserRole, UserRoles } from "../interfaces/user.interface";
 
 
 @modelOptions({
@@ -20,7 +20,8 @@ class UserClass {
     @prop({ type: String })
     public email?: string;
 
-    @prop({ type: () => [UserRole], required: true, default: [UserRole.USER] })
+    // todo: fix this field
+    @prop({ type: [String], enum: UserRoles, required: true, default: ['user'] })
     public roles!: UserRole[];
 
     @prop({ type: Date, default: () => new Date() })
@@ -30,5 +31,6 @@ class UserClass {
     public updatedAt!: Date;
 
 }
+
 
 export const UserModel = getModelForClass(UserClass);

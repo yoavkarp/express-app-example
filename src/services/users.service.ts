@@ -15,7 +15,7 @@ export class UsersService {
     public async findUserByPhoneNumber(phone_number: string) {
         const user = await UserModel.findOne({ phone_number }).lean<User>();
         if (!user) {
-            throw new HttpError(400, 'User not found');
+            throw new HttpError(400, 'User not found with this phone number');
         }
         return user;
     }

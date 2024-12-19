@@ -7,7 +7,5 @@ export type User = {
     updatedAt: Date;
 }
 
-export enum UserRole {
-    ADMIN = 'admin',
-    USER = 'user'
-}
+export const UserRoles = ['admin', 'user'] as const;
+export type UserRole = typeof UserRoles[number];

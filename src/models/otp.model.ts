@@ -11,13 +11,13 @@ import { ObjectId } from "mongoose";
     },
 })
 class OtpClass {
-    @prop({ type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' })
+    @prop({ type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User', unique: true })
     userId!: ObjectId;
 
-    @prop({ type: String, required: true, match: /^[0-9]{6}$/, immutable: false })
-    code!: string;
+    @prop({ type: String, required: true, match: /^[0-9]{6}$/, immutable: true })
+    code!: Readonly<string>;
 
-    @prop({ type: String, required: true })
+    @prop({ type: String, required: true, unique: true })
     phone_number!: string;
 
     @prop({ type: Date, required: true, default: () => new Date() })

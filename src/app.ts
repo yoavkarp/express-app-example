@@ -5,12 +5,12 @@ import { errorMiddleware } from './middleware/error.middleware';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
-import session from 'express-session';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { UsersService } from './services/users.service';
 import { OtpService } from './services/otp.service';
+import { session } from '@/middleware/session.middleware'
+import { limiter } from './middleware/rateLimiter.middleware';
 
 export class App {
 
@@ -38,10 +38,6 @@ export class App {
         }))
 
         // rate limiter
-        const limiter = rateLimit({
-            windowMs: 15 * 60 * 1000, // 15 minutes
-            max: 100, // limit each IP to 100 requests per windowMs
-        });
         if (process.env.NODE_ENV === 'production') {
             this.app.use(limiter);
 
@@ -52,18 +48,35 @@ export class App {
         }
 
         // session
-        this.app.use(
-            session({
-                secret: process.env.SESSION_SECRET || 'your-secret-key',
-                resave: false,
-                saveUninitialized: true
-            })
-        );
+        this.app.use(session);
 
         // passport
         this.app.use(passport.initialize());
         this.app.use(passport.session());
+        this.setupAuth();
 
+        // load routers
+        routers.forEach(r => this.app.use(r.path, r.router))
+
+        // error middleware
+        this.app.use(errorMiddleware);
+    }
+
+    listen() {
+        if (this.server) {
+            console.error('Server already running');
+            return;
+        }
+        this.server = this.app.listen(process.env.PORT || 3000, () => {
+            console.log('Server is running on port', process.env.PORT || 3000);
+        });
+    }
+
+    close(callback?: () => void) {
+        this.server?.close(callback);
+    }
+
+    setupAuth() {
         passport.use(
             'otp',
             new LocalStrategy(
@@ -85,34 +98,13 @@ export class App {
         );
 
         passport.serializeUser((user: any, done) => {
-            console.log("USER", user);
             done(null, user._id);
         });
 
-        passport.deserializeUser(async (phone_number: string, done) => {
+        passport.deserializeUser(async (userId: string, done) => {
             let usersService = new UsersService();
-            const user = await usersService.findUserByPhoneNumber(phone_number);
+            const user = await usersService.getUserById(userId);
             done(null, user || false);
         });
-
-        // load routers
-        routers.forEach(r => this.app.use(r.path, r.router))
-
-        // error middleware
-        this.app.use(errorMiddleware);
-    }
-
-    listen() {
-        if (this.server) {
-            console.error('Server already running');
-            return;
-        }
-        this.server = this.app.listen(process.env.PORT || 3000, () => {
-            console.log('Server is running on port', process.env.PORT || 3000);
-        });
-    }
-
-    close(callback?: () => void) {
-        this.server?.close(callback);
     }
 }

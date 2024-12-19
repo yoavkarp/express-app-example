@@ -12,6 +12,14 @@ export class UsersService {
         return user;
     }
 
+    public async findUserByPhoneNumber(phone_number: string) {
+        const user = await UserModel.findOne({ phone_number }).lean<User>();
+        if (!user) {
+            throw new HttpError(400, 'User not found');
+        }
+        return user;
+    }
+
     public async createUser(data: CreateUserInput) {
         const user = await UserModel.create(data);
         return user.toJSON();

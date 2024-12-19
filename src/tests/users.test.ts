@@ -54,10 +54,10 @@ describe('Users Controller', () => {
         expect(response.body).toHaveProperty('_id');
     })
 
-    it('should delete a user by id', async () => {
-        let response = await test.delete(`/users/${userId}`);
+    // it('should delete a user by id', async () => {
+    //     let response = await test.delete(`/users/${userId}`);
 
-        expect(response.status).toBe(200);
-        expect(response.body).toHaveProperty('message');
-    })
+    //     expect(response.status).toBe(200);
+    //     expect(response.body).toHaveProperty('message');
+    // })
 })

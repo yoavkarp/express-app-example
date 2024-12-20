@@ -1,7 +1,7 @@
 import { MongooseStore } from '@/utils/mongodb-session';
 import expressSession from 'express-session';
 
-export const session = expressSession({
+export const sessionMiddleware = expressSession({
     secret: process.env.SESSION_SECRET || 'your-secret-key',
     resave: false,
     saveUninitialized: false,

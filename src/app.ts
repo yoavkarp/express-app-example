@@ -1,7 +1,6 @@
 import express from 'express';
 import { Router } from './router';
 import Http from 'http';
-import { errorMiddleware } from './middleware/error.middleware';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
@@ -9,8 +8,11 @@ import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { UsersService } from './services/users.service';
 import { OtpService } from './services/otp.service';
-import { session } from '@/middleware/session.middleware'
-import { limiter } from './middleware/rateLimiter.middleware';
+
+import { sessionMiddleware } from '@/middleware/session.middleware'
+import { limiterMiddleware } from '@/middleware/rateLimiter.middleware';
+import { corsMiddleware } from '@/middleware/cors.middleware';
+import { errorMiddleware } from './middleware/error.middleware';
 
 export class App {
 
@@ -29,17 +31,32 @@ export class App {
         this.app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev', { skip: (req, res) => { return res.statusCode < 400 } }));
 
         // helmet
-        this.app.use(helmet({ xPoweredBy: false }));
-        this.app.use(helmet.contentSecurityPolicy({
-            directives: {
-                defaultSrc: ["'self'"],
-                scriptSrc: ["'self'"],
+        this.app.use(helmet({
+            xPoweredBy: false,
+            noSniff: false,
+            frameguard: { action: 'deny' },
+            contentSecurityPolicy: {
+                directives: {
+                    defaultSrc: ["'self'"],
+                    scriptSrc: ["'self'"],
+                    objectSrc: ["'none'"],
+                    upgradeInsecureRequests: [],
+                },
             },
-        }))
+            hsts: {
+                maxAge: 31536000, // 1 year
+                includeSubDomains: true, // Apply to subdomains
+                preload: true,
+            },
+            referrerPolicy: { policy: 'no-referrer' },
+            permittedCrossDomainPolicies: { permittedPolicies: 'none' }
+        }));
+
 
         // rate limiter
         if (process.env.NODE_ENV === 'production') {
-            this.app.use(limiter);
+            this.app.use(limiterMiddleware);
+            this.app.use(corsMiddleware);
 
             if (!process.env.SESSION_SECRET) {
                 console.error('SESSION_SECRET is required in production environment');
@@ -48,7 +65,7 @@ export class App {
         }
 
         // session
-        this.app.use(session);
+        this.app.use(sessionMiddleware);
 
         // passport
         this.app.use(passport.initialize());
@@ -56,7 +73,10 @@ export class App {
         this.setupAuth();
 
         // load routers
-        routers.forEach(r => this.app.use(r.path, r.router))
+        routers.forEach(r => {
+            this.app.use(r.path, r.router)
+            console.log(`Router loaded: ${r.path}`);
+        })
 
         // error middleware
         this.app.use(errorMiddleware);
@@ -68,7 +88,12 @@ export class App {
             return;
         }
         this.server = this.app.listen(process.env.PORT || 3000, () => {
-            console.log('Server is running on port', process.env.PORT || 3000);
+            console.log(process.env.NODE_ENV, 'Server is running on port', process.env.PORT || 3000);
+        });
+
+        process.on('SIGINT', () => {
+            this.server?.close(() => console.log("Server closed"));
+            process.exit(0); // Exit the process with a success code.
         });
     }
 

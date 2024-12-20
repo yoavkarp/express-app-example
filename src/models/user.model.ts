@@ -14,7 +14,7 @@ class UserClass {
     @prop({ type: String, required: true })
     public name!: string;
 
-    @prop({ type: String, required: true, unique: true })
+    @prop({ type: String, required: true, unique: true, index: 1 })
     public phone_number!: string;
 
     @prop({ type: String })

@@ -11,16 +11,15 @@ import { UserRole, UserRoles } from "../interfaces/user.interface";
 
 class UserClass {
 
-    @prop({ type: String, required: true })
+    @prop({ type: String, maxlength: 255, required: true })
     public name!: string;
 
-    @prop({ type: String, required: true, unique: true, index: 1 })
+    @prop({ type: String, maxlength: 15, required: true, unique: true, index: 1 })
     public phone_number!: string;
 
     @prop({ type: String })
     public email?: string;
 
-    // todo: fix this field
     @prop({ type: [String], enum: UserRoles, required: true, default: ['user'] })
     public roles!: UserRole[];
 

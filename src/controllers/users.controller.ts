@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { User } from "../interfaces/user.interface";
+import { IUser } from "../interfaces/user.interface";
 import { UsersService } from "../services/users.service";
 import { createUserInputSchema, updateUserInputSchema } from "../validators/users.validators";
 import { HttpError } from "../errors/http.error";
@@ -62,7 +62,7 @@ export class UsersController {
     getUserById: RequestHandler = async (req, res, next) => {
         try {
             const id = req.params.id;
-            const user: User = await this.UsersService.getUserById(id);
+            const user: IUser = await this.UsersService.getUserById(id);
             res.json(user);
         }
         catch (e: any) {

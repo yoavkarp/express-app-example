@@ -25,7 +25,7 @@ export type DeleteActionLog = {
 
 export type AnyActionLog = UpdateActionLog | CreateActionLog | DeleteActionLog;
 
-export type ActionLog = {
+export type IActionLog = {
     userId: string;
     entity: string;
     entityId: string;

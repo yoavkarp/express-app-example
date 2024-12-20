@@ -1,7 +1,3 @@
-import { HttpError } from "../errors/http.error";
-import { UserModel } from "../models/user.model";
-import { User } from "../interfaces/user.interface";
-import { CreateUserInput, UpdateUserInput } from "../validators/users.validators";
 import { ActionLogModel } from "../models/actionLog.model";
 import { ActionLogType, UpdateActionLogChange } from "../interfaces/actionLog.interface";
 

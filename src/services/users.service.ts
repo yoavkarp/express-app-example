@@ -1,11 +1,11 @@
 import { HttpError } from "../errors/http.error";
 import { UserModel } from "../models/user.model";
-import { User } from "../interfaces/user.interface";
+import { IUser } from "../interfaces/user.interface";
 import { CreateUserInput, UpdateUserInput } from "../validators/users.validators";
 
 export class UsersService {
     public async getUserById(id: string) {
-        const user = await UserModel.findById(id).lean<User>();
+        const user = await UserModel.findById(id).lean<IUser>();
         if (!user) {
             throw new HttpError(400, 'User not found');
         }
@@ -13,7 +13,7 @@ export class UsersService {
     }
 
     public async findUserByPhoneNumber(phone_number: string) {
-        const user = await UserModel.findOne({ phone_number }).lean<User>();
+        const user = await UserModel.findOne({ phone_number }).lean<IUser>();
         if (!user) {
             throw new HttpError(400, 'User not found with this phone number');
         }
@@ -26,12 +26,12 @@ export class UsersService {
     }
 
     public async updateUser(id: string, data: UpdateUserInput) {
-        const user = await UserModel.findByIdAndUpdate(id, data).lean<User>();
+        const user = await UserModel.findByIdAndUpdate(id, data).lean<IUser>();
         return user;
     }
 
     public async deleteUser(id: string) {
-        const user = await UserModel.findByIdAndDelete(id).lean<User>();
+        const user = await UserModel.findByIdAndDelete(id).lean<IUser>();
         return user;
     }
 }

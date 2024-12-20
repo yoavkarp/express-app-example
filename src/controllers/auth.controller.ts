@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { User } from "../interfaces/user.interface";
+import { IUser } from "../interfaces/user.interface";
 import { HttpError } from "../errors/http.error";
 import { ActionLogService } from "../services/actionLog.service";
 import { ActionLogType } from "../interfaces/actionLog.interface";
@@ -52,7 +52,7 @@ export class AuthController {
             return;
         }
 
-        passport.authenticate('otp', (err: Error | null, user: User | null, info: any) => {
+        passport.authenticate('otp', (err: Error | null, user: IUser | null, info: any) => {
             if (err) return next(err);
             if (!user) return res.status(401).json({ message: info.message });
             req.login(user, loginErr => {

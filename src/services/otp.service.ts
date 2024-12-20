@@ -1,9 +1,8 @@
 import { HttpError } from "../errors/http.error";
 import { UserModel } from "../models/user.model";
-import { User } from "../interfaces/user.interface";
 import { CreateUserInput, UpdateUserInput } from "../validators/users.validators";
 import { OtpModel } from "../models/otp.model";
-import { Otp } from "../interfaces/otp.interface";
+import { IOtp } from "../interfaces/otp.interface";
 
 const _generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
 const generateOTP = () => "123456";
@@ -23,7 +22,7 @@ export class OtpService {
     }
 
     public async verifyOtp(phone_number: string, otp: string) {
-        const otpDoc = await OtpModel.findOne({ phone_number, code: otp }).lean<Otp>();
+        const otpDoc = await OtpModel.findOne({ phone_number, code: otp }).lean<IOtp>();
         if (!otpDoc) {
             throw new HttpError(400, 'Invalid OTP');
         }

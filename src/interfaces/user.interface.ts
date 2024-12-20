@@ -1,4 +1,5 @@
-export type User = {
+export type IUser = {
+    _id: string;
     name: string;
     email: string;
     phone_number: string;

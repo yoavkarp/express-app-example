@@ -18,7 +18,7 @@ export class CardioWorkoutExerciseClass {
     @prop({ type: String, maxlength: 255 })
     notes?: string;
 
-    @prop({ type: [IntervalClass], required: true, minlength: 1 })
+    @prop({ type: [IntervalClass], required: true, default: [] })
     intervals!: IInterval[];
 
     @prop({ type: String, enum: ['cardio'], required: true, default: "cardio", immutable: true })

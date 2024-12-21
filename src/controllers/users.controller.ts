@@ -9,12 +9,12 @@ import { validateObjectId } from "../validators/objectId.validator";
 
 export class UsersController {
 
-    UsersService: UsersService;
-    ActionLogService: ActionLogService;
+    usersService: UsersService;
+    actionLogService: ActionLogService;
 
     constructor() {
-        this.UsersService = new UsersService();
-        this.ActionLogService = new ActionLogService();
+        this.usersService = new UsersService();
+        this.actionLogService = new ActionLogService();
     }
 
     createUser: RequestHandler = async (req, res) => {
@@ -27,10 +27,10 @@ export class UsersController {
             return;
         }
 
-        const user = await this.UsersService.createUser(validate.data);
+        const user = await this.usersService.createUser(validate.data);
         res.json(user);
 
-        this.ActionLogService.create('userId', 'User', user._id.toHexString(), ActionLogType.CREATE);
+        this.actionLogService.create('userId', 'User', user._id.toHexString(), ActionLogType.CREATE);
     }
 
     updateUser: RequestHandler = async (req, res, next) => {
@@ -45,14 +45,14 @@ export class UsersController {
             next(new HttpError(400, `Validation failed: ${validate.error.errors.map((e) => e.message).join(', ')}`));
             return;
         }
-        const user = await this.UsersService.updateUser(id, validate.data);
+        const user = await this.usersService.updateUser(id, validate.data);
         if (!user) {
             next(new HttpError(400, 'User not found'));
             return;
         }
         res.json(user);
 
-        this.ActionLogService.create('userId', 'User', id, ActionLogType.UPDATE, Object.keys(validate.data).reduce<typeof validate.data>((acc, cur) => {
+        this.actionLogService.create('userId', 'User', id, ActionLogType.UPDATE, Object.keys(validate.data).reduce<typeof validate.data>((acc, cur) => {
             acc[cur as keyof typeof acc] = user[cur as keyof typeof acc];
             return acc;
         }, { ...validate.data }), validate.data);
@@ -62,7 +62,7 @@ export class UsersController {
     getUserById: RequestHandler = async (req, res, next) => {
         try {
             const id = req.params.id;
-            const user: IUser = await this.UsersService.getUserById(id);
+            const user: IUser = await this.usersService.getUserById(id);
             res.json(user);
         }
         catch (e: any) {
@@ -72,9 +72,9 @@ export class UsersController {
 
     deleteUser: RequestHandler = async (req, res) => {
         const id = req.params.id;
-        await this.UsersService.deleteUser(id);
+        await this.usersService.deleteUser(id);
         res.json({ message: 'User deleted', id });
 
-        this.ActionLogService.create('userId', 'User', id, ActionLogType.DELETE);
+        this.actionLogService.create('userId', 'User', id, ActionLogType.DELETE);
     }
 }

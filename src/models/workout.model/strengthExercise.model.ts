@@ -20,6 +20,6 @@ export class StrengthWorkoutExerciseClass {
     @prop({ type: String, enum: ['strength'], required: true, default: "strength", immutable: true })
     type!: Readonly<'strength'>;
 
-    @prop({ type: [SetClass], required: true, minlength: 1 })
-    intervals!: ISet[];
+    @prop({ type: [SetClass], required: true, default: [] })
+    sets!: ISet[];
 }

@@ -5,8 +5,8 @@
   "scripts": {
     "dev": "nodemon -r tsconfig-paths/register src/server.ts",
     "test": "jest",
-    "build": "tsc",
-    "start": "node dist/server.js"
+    "build": "tsc --bundle --packages=external",
+    "start": "nodemon dist/server.js"
   },
   "keywords": [],
   "author": "",

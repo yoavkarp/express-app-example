@@ -14,5 +14,6 @@ export class AuthRouter extends Router {
     setRoutes() {
         this.router.post('/login', this.AuthController.loginWithPhoneNumber);
         this.router.post('/verify-otp', this.AuthController.verifyOtp);
+        this.router.get('/', this.AuthController.getSession)
     }
 }

@@ -10,4 +10,10 @@ export class Database {
         }
         return this.connection
     }
+
+    async disconnect() {
+        if (this.connection) {
+            await this.connection.close();
+        }
+    }
 }

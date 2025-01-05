@@ -3,23 +3,25 @@ import { Router } from './router';
 import Http from 'http';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
-import helmet from 'helmet';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { UsersService } from './services/users.service';
 import { OtpService } from './services/otp.service';
-
 import { sessionMiddleware } from '@/middleware/session.middleware'
 import { limiterMiddleware } from '@/middleware/rateLimiter.middleware';
 import { corsMiddleware } from '@/middleware/cors.middleware';
 import { errorMiddleware } from './middleware/error.middleware';
+import { Database } from './db/database';
+import { helmetMiddleware } from './middleware/helmet.middleware';
 
 export class App {
 
     readonly app: express.Express;
-    private server: Http.Server | null = null;
+    public server: Http.Server | null = null;
+    readonly database: Database;
 
-    constructor(routers: Router[]) {
+    constructor(routers: Router[] = []) {
+        this.database = new Database();
         this.app = express();
         this.app.use(express.json({ limit: '10kb' }));
         this.app.use(express.urlencoded({ extended: true }));
@@ -31,27 +33,7 @@ export class App {
         this.app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev', { skip: (req, res) => { return res.statusCode < 400 } }));
 
         // helmet
-        this.app.use(helmet({
-            xPoweredBy: false,
-            noSniff: false,
-            frameguard: { action: 'deny' },
-            contentSecurityPolicy: {
-                directives: {
-                    defaultSrc: ["'self'"],
-                    scriptSrc: ["'self'"],
-                    objectSrc: ["'none'"],
-                    upgradeInsecureRequests: [],
-                },
-            },
-            hsts: {
-                maxAge: 31536000, // 1 year
-                includeSubDomains: true, // Apply to subdomains
-                preload: true,
-            },
-            referrerPolicy: { policy: 'no-referrer' },
-            permittedCrossDomainPolicies: { permittedPolicies: 'none' }
-        }));
-
+        this.app.use(helmetMiddleware);
 
         // rate limiter
         if (process.env.NODE_ENV === 'production') {
@@ -82,22 +64,27 @@ export class App {
         this.app.use(errorMiddleware);
     }
 
-    listen() {
+    async start() {
         if (this.server) {
             console.error('Server already running');
             return;
         }
+
+        await this.database.connect();
+        console.log("Database connection established")
+
         this.server = this.app.listen(process.env.PORT || 3000, () => {
-            console.log(process.env.NODE_ENV, 'Server is running on port', process.env.PORT || 3000);
+            console.log(process.env.NODE_ENV || "development", 'Server is running on port', process.env.PORT || 3000);
         });
 
-        process.on('SIGINT', () => {
-            this.server?.close(() => console.log("Server closed"));
+        process.on('SIGINT', (e) => {
+            this.close(() => console.log("Server closed"));
             process.exit(0); // Exit the process with a success code.
         });
     }
 
-    close(callback?: () => void) {
+    async close(callback?: () => void) {
+        await this.database.disconnect();
         this.server?.close(callback);
     }
 

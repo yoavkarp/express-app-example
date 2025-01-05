@@ -4,19 +4,13 @@ import { Router } from './router';
 import { AuthRouter } from './routers/auth.router';
 import { TestRouter } from './routers/test.router';
 import { UsersRouter } from './routers/users.router';
+import { WorkoutRouter } from './routers/workout.router';
 import './utils/configEnv';
 
-let mongodb = new Database();
-const routers: Router[] = [new UsersRouter(), new AuthRouter()];
-if (process.env.NODE_ENV === 'development') {
+const routers: Router[] = [new UsersRouter(), new AuthRouter(), new WorkoutRouter()];
+if (['development', 'test', undefined].includes(process.env.NODE_ENV)) {
     routers.push(new TestRouter());
 }
 
-mongodb.connect()
-    .then(() => {
-        let server = new App(routers);
-        server.listen();
-    })
-    .catch(err => {
-        console.error(err);
-    })
+let server = new App(routers);
+server.start();

@@ -10,14 +10,12 @@ let database = new Database();
 let server = new App([new UsersRouter(), new AuthRouter()]);
 
 beforeAll(async () => {
-    await database.connect();
-    server.listen();
+    await server.start();
     await ActionLogModel.deleteMany({ entity: "User" }).exec()
 })
 
 afterAll(async () => {
     server.close();
-    database.connection?.close();
 })
 
 describe('Auth Controller', () => {

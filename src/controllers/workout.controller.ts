@@ -30,7 +30,8 @@ export class WorkoutController {
         const workout = await this.workoutService.createWorkout(validate.data);
         res.json(workout);
 
-        this.actionLogService.create('workoutId', 'Workout', workout._id.toHexString(), ActionLogType.CREATE);
+        if (req.isAuthenticated())
+            this.actionLogService.create(req.user._id, 'Workout', workout._id.toHexString(), ActionLogType.CREATE);
     }
 
     updateWorkout: RequestHandler = async (req, res, next) => {
@@ -52,10 +53,11 @@ export class WorkoutController {
         }
         res.json(workout);
 
-        this.actionLogService.create('workoutId', 'Workout', id, ActionLogType.UPDATE, Object.keys(validate.data).reduce<typeof validate.data>((acc, cur) => {
-            acc[cur as keyof typeof acc] = workout[cur as keyof typeof acc];
-            return acc;
-        }, { ...validate.data }), validate.data);
+        if (req.isAuthenticated())
+            this.actionLogService.create("userId", 'Workout', id, ActionLogType.UPDATE, Object.keys(validate.data).reduce<typeof validate.data>((acc, cur) => {
+                acc[cur as keyof typeof acc] = workout[cur as keyof typeof acc];
+                return acc;
+            }, { ...validate.data }), validate.data);
 
     }
 
@@ -75,6 +77,7 @@ export class WorkoutController {
         await this.workoutService.deleteWorkout(id);
         res.json({ message: 'Workout deleted', id });
 
-        this.actionLogService.create('workoutId', 'Workout', id, ActionLogType.DELETE);
+        if (req.isAuthenticated())
+            this.actionLogService.create("userId", 'Workout', id, ActionLogType.DELETE);
     }
 }

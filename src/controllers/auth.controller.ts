@@ -62,4 +62,10 @@ export class AuthController {
         })(req, res, next);
 
     }
+
+    getSession: RequestHandler = async (req, res) => {
+        res.json({
+            user: req.user
+        })
+    }
 }

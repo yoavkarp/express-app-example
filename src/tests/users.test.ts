@@ -9,14 +9,12 @@ let database = new Database();
 let server = new App([new UsersRouter()]);
 
 beforeAll(async () => {
-    await database.connect();
-    server.listen();
+    await server.start();
     await ActionLogModel.deleteMany({ entity: "User" }).exec()
 })
 
-afterAll(async () => {
+afterAll(() => {
     server.close();
-    database.connection?.close();
 })
 
 describe('Users Controller', () => {

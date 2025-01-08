@@ -4,15 +4,14 @@ import Http from 'http';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import passport from 'passport';
-import { Strategy as LocalStrategy } from 'passport-local';
-import { UsersService } from './services/users.service';
-import { OtpService } from './services/otp.service';
 import { sessionMiddleware } from '@/middleware/session.middleware'
 import { limiterMiddleware } from '@/middleware/rateLimiter.middleware';
 import { corsMiddleware } from '@/middleware/cors.middleware';
 import { errorMiddleware } from './middleware/error.middleware';
 import { Database } from './db/database';
 import { helmetMiddleware } from './middleware/helmet.middleware';
+import './middleware/passport.middleware';
+
 
 export class App {
 
@@ -37,6 +36,7 @@ export class App {
 
         // rate limiter
         if (process.env.NODE_ENV === 'production') {
+            console.log("PRODUCTION MODE")
             this.app.use(limiterMiddleware);
             this.app.use(corsMiddleware);
 
@@ -46,13 +46,14 @@ export class App {
             }
         }
 
+        this.app.use(corsMiddleware);
+
         // session
         this.app.use(sessionMiddleware);
 
         // passport
         this.app.use(passport.initialize());
         this.app.use(passport.session());
-        this.setupAuth();
 
         // load routers
         routers.forEach(r => {
@@ -86,37 +87,5 @@ export class App {
     async close(callback?: () => void) {
         await this.database.disconnect();
         this.server?.close(callback);
-    }
-
-    setupAuth() {
-        passport.use(
-            'otp',
-            new LocalStrategy(
-                { usernameField: 'phone_number', passwordField: 'otp', passReqToCallback: true },
-                async (req, phone_number: string, otp: string, done) => {
-                    let usersService = new UsersService();
-                    let otpService = new OtpService();
-                    try {
-                        await otpService.verifyOtp(phone_number, otp);
-                        await otpService.deleteOtp(phone_number);
-                        const user = await usersService.findUserByPhoneNumber(phone_number);
-                        return done(null, user);
-                    }
-                    catch (e: any) {
-                        return done(null, false, { message: e.message });
-                    }
-                }
-            )
-        );
-
-        passport.serializeUser((user: any, done) => {
-            done(null, user._id);
-        });
-
-        passport.deserializeUser(async (userId: string, done) => {
-            let usersService = new UsersService();
-            const user = await usersService.getUserById(userId);
-            done(null, user || false);
-        });
     }
 }

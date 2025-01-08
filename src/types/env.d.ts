@@ -4,5 +4,9 @@ declare namespace NodeJS {
         PORT?: string;
         MONGODB_URI?: string;
         SESSION_SECRET?: string;
+        JWKS_URI: string;
+        AWS_COGNITO_USER_POOL_ID: string;
+        AWS_COGNITO_CLIENT_ID: string;
+        AWS_REGION: string;
     }> { }
 }

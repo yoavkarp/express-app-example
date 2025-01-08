@@ -1,9 +1,6 @@
 import { RequestHandler } from "express";
 import { IUser } from "../interfaces/user.interface";
-import { HttpError } from "../errors/http.error";
 import { ActionLogService } from "../services/actionLog.service";
-import { ActionLogType } from "../interfaces/actionLog.interface";
-import { validateObjectId } from "../validators/objectId.validator";
 import { loginInputSchema, verifyOtpInputSchema } from "@/validators/auth.validators";
 import { OtpService } from "@/services/otp.service";
 import passport from "passport";

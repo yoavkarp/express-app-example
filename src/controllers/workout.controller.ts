@@ -1,4 +1,3 @@
-import { RequestHandler } from "express";
 import { IWorkout } from "../interfaces/workout.interface";
 import { WorkoutService } from "../services/workout.service";
 import { createWorkoutSchema, updateWorkoutSchema } from "../validators/workout.validators";
@@ -6,6 +5,7 @@ import { HttpError } from "../errors/http.error";
 import { ActionLogService } from "../services/actionLog.service";
 import { ActionLogType } from "../interfaces/actionLog.interface";
 import { validateObjectId } from "../validators/objectId.validator";
+import { RequestHandler } from "express";
 
 export class WorkoutController {
 
@@ -31,7 +31,7 @@ export class WorkoutController {
         res.json(workout);
 
         if (req.isAuthenticated())
-            this.actionLogService.create(req.user._id, 'Workout', workout._id.toHexString(), ActionLogType.CREATE);
+            this.actionLogService.create(req.user?._id, 'Workout', workout._id.toHexString(), ActionLogType.CREATE);
     }
 
     updateWorkout: RequestHandler = async (req, res, next) => {

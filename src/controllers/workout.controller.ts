@@ -54,7 +54,7 @@ export class WorkoutController {
         res.json(workout);
 
         if (req.isAuthenticated())
-            this.actionLogService.create("userId", 'Workout', id, ActionLogType.UPDATE, Object.keys(validate.data).reduce<typeof validate.data>((acc, cur) => {
+            this.actionLogService.create(req.user?._id, 'Workout', id, ActionLogType.UPDATE, Object.keys(validate.data).reduce<typeof validate.data>((acc, cur) => {
                 acc[cur as keyof typeof acc] = workout[cur as keyof typeof acc];
                 return acc;
             }, { ...validate.data }), validate.data);
@@ -78,6 +78,6 @@ export class WorkoutController {
         res.json({ message: 'Workout deleted', id });
 
         if (req.isAuthenticated())
-            this.actionLogService.create("userId", 'Workout', id, ActionLogType.DELETE);
+            this.actionLogService.create(req.user?._id, 'Workout', id, ActionLogType.DELETE);
     }
 }

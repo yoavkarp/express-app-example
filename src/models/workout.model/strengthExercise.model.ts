@@ -1,6 +1,6 @@
 import { modelOptions, Severity, prop } from "@typegoose/typegoose";
 import { SetClass } from "./set.model";
-import { ISet } from "@/interfaces/set.interface";
+import { ISet } from "../../interfaces/set.interface";
 
 @modelOptions({
     options: {

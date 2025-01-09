@@ -1,5 +1,5 @@
 import session, { SessionData } from 'express-session';
-import { SessionModel } from '@/models/session.model'
+import { SessionModel } from '../models/session.model'
 
 export class MongooseStore extends session.Store {
 

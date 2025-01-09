@@ -1,7 +1,5 @@
-import { ObjectId } from "mongoose";
-
 export type IOtp = {
-    userId: ObjectId;
+    userId: string;
     phone_number: string;
     code: string;
     createdAt: Date;

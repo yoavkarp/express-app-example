@@ -1,7 +1,7 @@
 import { HttpError } from "../errors/http.error";
 import { CreateWorkoutInput, UpdateWorkoutInput } from "../validators/workout.validators";
-import { WorkoutModel } from "@/models/workout.model";
-import { IWorkout } from "@/interfaces/workout.interface";
+import { WorkoutModel } from "../models/workout.model";
+import { IWorkout } from "../interfaces/workout.interface";
 
 export class WorkoutService {
     public async getWorkoutById(id: string) {

@@ -1,39 +1,46 @@
 import passport from 'passport';
-import { Strategy as LocalStrategy } from 'passport-local';
-import { UsersService } from '@/services/users.service';
-import { OtpService } from '@/services/otp.service';
+import { Strategy as JwtStrategy, ExtractJwt, StrategyOptionsWithoutRequest } from 'passport-jwt';
+import { UsersService } from '../../src/services/users.service';
+import { auth } from '../../src/auth/auth';
 
 passport.use(
     'otp',
-    new LocalStrategy(
-        { usernameField: 'phone_number', passwordField: 'otp', passReqToCallback: true },
-        async (req, phone_number: string, otp: string, done) => {
-            let usersService = new UsersService();
-            let otpService = new OtpService();
+    new JwtStrategy({
+        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+        secretOrKey: auth.getKeys().AccessToken.privateKey, // Use a secure secret and store it safely
+        algorithms: ['RS256']
+    },
+        async (jwtPayload, done) => {
+            const usersService = new UsersService();
             try {
-                await otpService.verifyOtp(phone_number, otp);
-                await otpService.deleteOtp(phone_number);
-                const user = await usersService.findUserByPhoneNumber(phone_number);
+                const user = await usersService.getUserById(jwtPayload.id);
+                if (user) {
+                    return done(null, user);
+                }
+                return done(null, false);
+            } catch (err) {
+                return done(err, false);
+            }
+        })
+)
+
+passport.use(
+    'refresh-token',
+    new JwtStrategy({
+        jwtFromRequest: ExtractJwt.fromBodyField('refreshToken'),
+        secretOrKey: auth.getKeys().RefreshToken.privateKey, // Refresh token secret
+        algorithms: ['RS256']
+    },
+        async (jwtPayload, done) => {
+            const usersService = new UsersService();
+            try {
+                const user = await usersService.getUserById(jwtPayload.id);
                 return done(null, user);
             }
-            catch (e: any) {
-                return done(null, false, { message: e.message });
+            catch (err) {
+                return done(err, false);
             }
         }
-    )
-);
+    ));
 
-passport.use('atarix', new LocalStrategy({ usernameField: 'atarix_token' },
-    (atarix_token, _, done) => {
-
-    }))
-
-passport.serializeUser((user: any, done) => {
-    done(null, user._id);
-});
-
-passport.deserializeUser(async (userId: string, done) => {
-    let usersService = new UsersService();
-    const user = await usersService.getUserById(userId);
-    done(null, user || false);
-});
+export { passport }

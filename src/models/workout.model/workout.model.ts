@@ -1,7 +1,5 @@
-import { IInterval } from "@/interfaces/interval.interface";
-import { IWorkoutExercise } from "@/interfaces/workout.interface";
-import { getModelForClass, modelOptions, mongoose, prop, Severity } from "@typegoose/typegoose";
-import { IntervalClass } from "./interval.model";
+import { IWorkoutExercise } from "../../interfaces/workout.interface";
+import { modelOptions, prop } from "@typegoose/typegoose";
 import { StrengthWorkoutExerciseClass } from "./strengthExercise.model";
 import { CardioWorkoutExerciseClass } from "./cardioExercise.model";
 

@@ -1,9 +1,10 @@
 import { RequestHandler } from "express";
-import { IUser } from "../interfaces/user.interface";
 import { ActionLogService } from "../services/actionLog.service";
-import { loginInputSchema, verifyOtpInputSchema } from "@/validators/auth.validators";
-import { OtpService } from "@/services/otp.service";
-import passport from "passport";
+import jwt from 'jsonwebtoken';
+import { auth } from "../auth/auth";
+import { OtpService } from "../services/otp.service";
+import { loginInputSchema, verifyOtpInputSchema } from "../validators/auth.validators";
+
 
 export class AuthController {
 
@@ -49,14 +50,10 @@ export class AuthController {
             return;
         }
 
-        passport.authenticate('otp', (err: Error | null, user: IUser | null, info: any) => {
-            if (err) return next(err);
-            if (!user) return res.status(401).json({ message: info.message });
-            req.login(user, loginErr => {
-                if (loginErr) return next(loginErr);
-                res.status(200).json({ message: 'Logged in successfully', user });
-            });
-        })(req, res, next);
+        const verify = await this.OtpService.verifyOtp(validate.data.phone_number, validate.data.otp);
+        const accessToken = auth.generateAccessToken(verify.userId);
+        const refreshToken = auth.generateRefreshToken(verify.userId);
+        res.status(200).json({ message: 'Logged in successfully', accessToken, refreshToken });
 
     }
 

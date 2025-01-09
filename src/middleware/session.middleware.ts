@@ -1,4 +1,4 @@
-import { MongooseStore } from '@/utils/mongodb-session';
+import { MongooseStore } from '../utils/mongodb-session';
 import expressSession from 'express-session';
 
 export const sessionMiddleware = expressSession({

@@ -1,5 +1,4 @@
 import { App } from './app';
-import { Database } from './db/database';
 import { Router } from './router';
 import { AuthRouter } from './routers/auth.router';
 import { TestRouter } from './routers/test.router';

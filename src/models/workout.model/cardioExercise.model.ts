@@ -1,4 +1,4 @@
-import { IInterval } from "@/interfaces/interval.interface";
+import { IInterval } from "../../interfaces/interval.interface";
 import { modelOptions, Severity, prop } from "@typegoose/typegoose";
 import { IntervalClass } from "./interval.model";
 

@@ -3,14 +3,13 @@ import { Router } from './router';
 import Http from 'http';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
-import passport from 'passport';
-import { sessionMiddleware } from '@/middleware/session.middleware'
-import { limiterMiddleware } from '@/middleware/rateLimiter.middleware';
-import { corsMiddleware } from '@/middleware/cors.middleware';
 import { errorMiddleware } from './middleware/error.middleware';
 import { Database } from './db/database';
 import { helmetMiddleware } from './middleware/helmet.middleware';
-import './middleware/passport.middleware';
+import { passport } from './middleware/passport.middleware';
+import { corsMiddleware } from './middleware/cors.middleware';
+import { limiterMiddleware } from './middleware/rateLimiter.middleware';
+import { sessionMiddleware } from './middleware/session.middleware';
 
 
 export class App {
@@ -29,7 +28,7 @@ export class App {
         this.app.use(cookieParser());
 
         // logger
-        this.app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev', { skip: (req, res) => { return res.statusCode < 400 } }));
+        this.app.use(morgan('dev'));
 
         // helmet
         this.app.use(helmetMiddleware);

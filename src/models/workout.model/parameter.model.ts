@@ -1,4 +1,4 @@
-import { DISTANCE_UNITS, INTENSITY_UNITS, TEMPO_UNITS, THR_UNITS, TIME_UNITS, WEIGHT_UNITS } from "@/interfaces/interval.interface";
+import { DISTANCE_UNITS, INTENSITY_UNITS, TEMPO_UNITS, THR_UNITS, TIME_UNITS, WEIGHT_UNITS } from "../../interfaces/interval.interface";
 import { modelOptions, prop } from "@typegoose/typegoose";
 
 const ALL_UNITS = [...TIME_UNITS, ...THR_UNITS, ...TEMPO_UNITS, ...WEIGHT_UNITS, ...DISTANCE_UNITS, ...INTENSITY_UNITS] as const;

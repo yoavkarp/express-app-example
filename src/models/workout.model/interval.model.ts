@@ -1,6 +1,6 @@
 import { modelOptions, prop } from "@typegoose/typegoose";
 import { ParameterClass } from "./parameter.model";
-import { IAngleParameter, IDistanceParameter, IDurationParameter, IIntensityParameter, IResistanceParameter, IRestParameter, ITempoParameter, IThrParameter, IWeightParameter, WEIGHT_UNITS } from "@/interfaces/interval.interface";
+import { IAngleParameter, IDistanceParameter, IDurationParameter, IIntensityParameter, IResistanceParameter, IRestParameter, ITempoParameter, IThrParameter, IWeightParameter, WEIGHT_UNITS } from "../../interfaces/interval.interface";
 
 @modelOptions({})
 export class IntervalClass {

@@ -1,7 +1,7 @@
 import passport from 'passport';
 import { Strategy as JwtStrategy, ExtractJwt, StrategyOptionsWithoutRequest } from 'passport-jwt';
-import { UsersService } from '../../src/services/users.service';
-import { auth } from '../../src/auth/auth';
+import { UsersService } from '../services/users.service';
+import { auth } from '../auth/auth';
 
 passport.use(
     'otp',

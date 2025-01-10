@@ -3,10 +3,16 @@ import { UserModel } from "../models/user.model";
 import { CreateUserInput, UpdateUserInput } from "../validators/users.validators";
 import { OtpModel } from "../models/otp.model";
 import { IOtp } from "../interfaces/otp.interface";
-import { IUser } from "src/interfaces/user.interface";
+import { IUser } from "../interfaces/user.interface";
 
-const _generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
-const generateOTP = () => "123456";
+const generateOTP_prod = () => Math.floor(100000 + Math.random() * 900000).toString();
+const generateOTP_dev = () => "123456";
+
+let generateOtp: () => string = generateOTP_prod;
+
+if (process.env.NODE_ENV === 'development') {
+    generateOtp = generateOTP_dev;
+}
 
 export class OtpService {
 
@@ -18,7 +24,7 @@ export class OtpService {
         if (!user) {
             throw new HttpError(400, 'User not found');
         }
-        const otp = await OtpModel.create({ phone_number, code: generateOTP(), userId: user._id });
+        const otp = await OtpModel.create({ phone_number, code: generateOtp(), userId: user._id });
         return otp.toJSON();
     }
 

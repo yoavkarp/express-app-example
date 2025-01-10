@@ -5,8 +5,8 @@
   "scripts": {
     "dev": "nodemon src/server.ts",
     "test": "jest",
-    "build": "tsc --bundle --packages=external",
-    "start": "nodemon dist/server.js"
+    "build": "tsc",
+    "start": "NODE_ENV=production nodemon dist/server.js"
   },
   "keywords": [],
   "author": "",

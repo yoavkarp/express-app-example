@@ -1,19 +1,21 @@
 import { RequestHandler } from "express";
 import { ActionLogService } from "../services/actionLog.service";
-import jwt from 'jsonwebtoken';
 import { auth } from "../auth/auth";
 import { OtpService } from "../services/otp.service";
 import { loginInputSchema, verifyOtpInputSchema } from "../validators/auth.validators";
+import { UsersService } from "../services/users.service";
 
 
 export class AuthController {
 
     private ActionLogService: ActionLogService;
     private OtpService: OtpService;
+    private UsersService: UsersService;
 
     constructor() {
         this.ActionLogService = new ActionLogService();
         this.OtpService = new OtpService();
+        this.UsersService = new UsersService();
     }
 
     loginWithPhoneNumber: RequestHandler = async (req, res) => {
@@ -53,7 +55,8 @@ export class AuthController {
         const verify = await this.OtpService.verifyOtp(validate.data.phone_number, validate.data.otp);
         const accessToken = auth.generateAccessToken(verify.userId);
         const refreshToken = auth.generateRefreshToken(verify.userId);
-        res.status(200).json({ message: 'Logged in successfully', accessToken, refreshToken });
+        const user = await this.UsersService.getUserById(verify.userId);
+        res.status(200).json({ message: 'Logged in successfully', accessToken, refreshToken, user });
 
     }
 

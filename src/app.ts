@@ -38,11 +38,6 @@ export class App {
             console.log("PRODUCTION MODE")
             this.app.use(limiterMiddleware);
             this.app.use(corsMiddleware);
-
-            if (!process.env.SESSION_SECRET) {
-                console.error('SESSION_SECRET is required in production environment');
-                process.exit(1);
-            }
         }
 
         this.app.use(corsMiddleware);

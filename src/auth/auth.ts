@@ -11,7 +11,7 @@ type AuthKeys = {
     RefreshToken: RSAKeys;
 }
 
-const KEYS_DIR = 'src/auth/keys';
+const KEYS_DIR = path.join(__dirname, 'keys');
 
 class Auth {
 

@@ -1,20 +1,17 @@
 import { RequestHandler } from "express";
 import { ActionLogService } from "../services/actionLog.service";
-import { auth } from "../auth/auth";
-import { OtpService } from "../services/otp.service";
+import { AuthService } from "../services/auth.service";
 import { loginInputSchema, verifyOtpInputSchema } from "../validators/auth.validators";
 import { UsersService } from "../services/users.service";
 
 
 export class AuthController {
 
-    private ActionLogService: ActionLogService;
-    private OtpService: OtpService;
+    private AuthService: AuthService;
     private UsersService: UsersService;
 
     constructor() {
-        this.ActionLogService = new ActionLogService();
-        this.OtpService = new OtpService();
+        this.AuthService = new AuthService();
         this.UsersService = new UsersService();
     }
 
@@ -29,7 +26,7 @@ export class AuthController {
         }
 
         try {
-            const otp = await this.OtpService.createOtpForUser(validate.data.phone_number);
+            const otp = await this.AuthService.createOtpForUser(validate.data.phone_number);
             res.json({
                 message: 'Otp sent'
             });
@@ -52,17 +49,22 @@ export class AuthController {
             return;
         }
 
-        const verify = await this.OtpService.verifyOtp(validate.data.phone_number, validate.data.otp);
-        const accessToken = auth.generateAccessToken(verify.userId);
-        const refreshToken = auth.generateRefreshToken(verify.userId);
+        const verify = await this.AuthService.verifyOtp(validate.data.phone_number, validate.data.otp);
+        const accessToken = this.AuthService.generateAccessToken(verify.userId);
+        const refreshToken = this.AuthService.generateRefreshToken(verify.userId);
         const user = await this.UsersService.getUserById(verify.userId);
         res.status(200).json({ message: 'Logged in successfully', accessToken, refreshToken, user });
 
     }
 
-    getSession: RequestHandler = async (req, res) => {
-        res.json({
+    refreshToken: RequestHandler = async (req, res) => {
+        const accessToken = this.AuthService.generateAccessToken(req.user?._id!);
+        const newTokens = {
+            accessToken: accessToken,
+            refreshToken: this.AuthService.generateRefreshToken(req.user?._id!),
+            decoded: this.AuthService.verifyAccessKey(accessToken),
             user: req.user
-        })
+        }
+        res.json(newTokens);
     }
 }

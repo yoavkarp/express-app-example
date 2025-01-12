@@ -8,4 +8,4 @@ const envMap: Record<Exclude<typeof process.env.NODE_ENV, undefined>, string> = 
 
 const cfg = config({ path: envMap[process.env.NODE_ENV || 'development'] });
 
-export { }
+export { cfg }

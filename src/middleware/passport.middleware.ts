@@ -1,13 +1,12 @@
 import passport from 'passport';
-import { Strategy as JwtStrategy, ExtractJwt, StrategyOptionsWithoutRequest } from 'passport-jwt';
+import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import { UsersService } from '../services/users.service';
-import { auth } from '../auth/auth';
 
 passport.use(
-    'otp',
+    'jwt',
     new JwtStrategy({
         jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-        secretOrKey: auth.getKeys().AccessToken.privateKey, // Use a secure secret and store it safely
+        secretOrKey: process.env.ACCESS_TOKEN_PRIVATE_KEY || "", // Use a secure secret and store it safely
         algorithms: ['RS256']
     },
         async (jwtPayload, done) => {
@@ -28,7 +27,7 @@ passport.use(
     'refresh-token',
     new JwtStrategy({
         jwtFromRequest: ExtractJwt.fromBodyField('refreshToken'),
-        secretOrKey: auth.getKeys().RefreshToken.privateKey, // Refresh token secret
+        secretOrKey: process.env.REFRESH_TOKEN_PRIVATE_KEY || "", // Refresh token secret
         algorithms: ['RS256']
     },
         async (jwtPayload, done) => {
@@ -43,4 +42,6 @@ passport.use(
         }
     ));
 
+export const checkAccessToken = passport.authenticate('jwt', { session: false });
+export const checkRefreshToken = passport.authenticate('refresh-token', { session: false });
 export { passport }

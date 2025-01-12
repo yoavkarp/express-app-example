@@ -7,10 +7,10 @@ import jwt from 'jsonwebtoken';
 const generateOTP_prod = () => Math.floor(100000 + Math.random() * 900000).toString();
 const generateOTP_dev = () => "123456";
 
-let generateOtp: () => string = generateOTP_prod;
+let generateOtp: () => string = generateOTP_dev;
 
-if (process.env.NODE_ENV === 'development') {
-    generateOtp = generateOTP_dev;
+if (process.env.NODE_ENV === 'production') {
+    generateOtp = generateOTP_prod;
 }
 
 export class AuthService {
@@ -46,15 +46,14 @@ export class AuthService {
         return otpDoc;
     }
 
-    public generateAccessToken(userId: string) {
-        const token = jwt.sign({ id: userId }, this.Keys.AccessToken.privateKey, { expiresIn: '1h', algorithm: 'RS256' });
+    public generateAccessToken(userId: string, expiresIn: string = '1d') {
+        const token = jwt.sign({ id: userId }, this.Keys.AccessToken.privateKey, { expiresIn, algorithm: 'RS256' });
         return token;
     }
 
-    public generateRefreshToken(userId: string) {
-        const token = jwt.sign({ id: userId }, this.getKeys().RefreshToken.privateKey, { expiresIn: '7d', algorithm: 'RS256' });
+    public generateRefreshToken(userId: string, expiresIn: string = '7d') {
+        const token = jwt.sign({ id: userId }, this.Keys.RefreshToken.privateKey, { expiresIn, algorithm: 'RS256' });
         return token;
-
     }
 
     public verifyAccessKey(token: string) {
